@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrait</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .instructions {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 8px;
+        }
+        input, button {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .pending {
+            background-color: #f0ad4e;
+            color: #fff;
+        }
+        .approved {
+            background-color: #5bc0de;
+            color: #fff;
+        }
+        .failed {
+            background-color: #d9534f;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulaire de Retrait</h1>
+        <div class="instructions">
+            Veuillez retirer votre argent sur RAMCHOC.
+        </div>
+        <form id="retraitForm">
+            <label for="montant">Montant à retirer :</label>
+            <input type="number" id="montant" name="montant" required>
+
+            <label for="password">Mode de passe de retrait :</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Soumettre</button>
+        </form>
+
+        <div id="statusMessage" class="status"></div>
+    </div>
+    <script>
+        document.getElementById('retraitForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Récupérer le montant et le mode de passe de retrait
+            const montant = document.getElementById('montant').value;
+            const password = document.getElementById('password').value;
+            const date = new Date();
+            const heure = date.toLocaleTimeString();
+            const currentDate = date.toLocaleDateString();
+
+            // Préparer les données du retrait
+            const retrait = {
+                date: `${currentDate} ${heure}`,
+                montant: montant,
+                password: password,
+                status: 'Retrait en cours de traitement'
+            };
+
+            // Ajouter le retrait à l'historique
+            let historique = JSON.parse(localStorage.getItem('historique')) || [];
+            historique.push(retrait);
+            localStorage.setItem('historique', JSON.stringify(historique));
+
+            // Afficher le message de statut
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = `Demande de ${montant} FCFA en cours de traitement.`;
+            statusMessage.className = 'status pending';
+
+            // Réinitialiser le formulaire
+            document.getElementById('retraitForm').reset();
+        });
+    </script>
+</body>
+</html>

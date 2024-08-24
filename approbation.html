@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approbation des Retraits</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .delete-button {
+            background-color: #f44336;
+        }
+        .delete-button:hover {
+            background-color: #e53935;
+        }
+        .failure-button {
+            background-color: #f39c12;
+        }
+        .failure-button:hover {
+            background-color: #e67e22;
+        }
+        .status-approved {
+            color: green;
+        }
+        .status-pending {
+            color: orange;
+        }
+        .status-failed {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Approbation des Retraits</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Montant</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="retraitTable">
+                <!-- Les demandes de retrait s'afficheront ici -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function afficherRetraits() {
+            const table = document.getElementById('retraitTable');
+            const historique = JSON.parse(localStorage.getItem('historique')) || [];
+
+            // Afficher les demandes de retrait en attente
+            table.innerHTML = ''; // Réinitialiser le contenu du tableau
+            historique.forEach((entry, index) => {
+                if (entry.status === 'Retrait en cours de traitement') {
+                    const row = table.insertRow();
+                    row.insertCell(0).textContent = entry.date;
+                    row.insertCell(1).textContent = entry.montant;
+                    row.insertCell(2).textContent = entry.status;
+
+                    // Créer un bouton pour approuver le retrait
+                    const approveButton = document.createElement('button');
+                    approveButton.textContent = 'Approuver';
+                    approveButton.onclick = () => approuverRetrait(index);
+                    row.insertCell(3).appendChild(approveButton);
+
+                    // Créer un bouton pour marquer le retrait comme échec
+                    const failureButton = document.createElement('button');
+                    failureButton.textContent = 'Échec';
+                    failureButton.classList.add('failure-button');
+                    failureButton.onclick = () => echouerRetrait(index);
+                    row.insertCell(3).appendChild(failureButton);
+
+                    // Créer un bouton pour supprimer le retrait
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Supprimer';
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.onclick = () => supprimerRetrait(index);
+                    row.insertCell(3).appendChild(deleteButton);
+                }
+            });
+        }
+
+        function approuverRetrait(index) {
+            let historique = JSON.parse(localStorage.getItem('historique')) || [];
+            
+            // Mettre à jour le statut de la demande de retrait
+            if (historique[index]) {
+                historique[index].status = 'Retrait approuvé';
+                localStorage.setItem('historique', JSON.stringify(historique));
+                afficherRetraits(); // Recharger les retraits après modification
+            }
+        }
+
+        function echouerRetrait(index) {
+            let historique = JSON.parse(localStorage.getItem('historique')) || [];
+            
+            // Mettre à jour le statut de la demande de retrait
+            if (historique[index]) {
+                historique[index].status = 'Retrait échoué';
+                localStorage.setItem('historique', JSON.stringify(historique));
+                afficherRetraits(); // Recharger les retraits après modification
+            }
+        }
+
+        function supprimerRetrait(index) {
+            let historique = JSON.parse(localStorage.getItem('historique')) || [];
+            
+            // Supprimer l'entrée du tableau historique
+            if (historique[index]) {
+                historique.splice(index, 1);
+                localStorage.setItem('historique', JSON.stringify(historique));
+                afficherRetraits(); // Recharger les retraits après suppression
+            }
+        }
+
+        afficherRetraits();
+    </script>
+</body>
+</html>

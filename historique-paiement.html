@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique de Paiement</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .historique-container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            display: none; /* Caché par défaut */
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .historique-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+        .historique-item h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .historique-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .delete-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        .delete-button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="historique-container" id="historique-container">
+        <h1>Historique de Paiement</h1>
+        <div class="historique-item">
+            <h3>Rechargement</h3>
+            <p><strong>Montant:</strong> <span id="amount-display"></span> XOF</p>
+            <p><strong>Numéro de Paiement:</strong> <span id="payment-number-display"></span></p>
+            <p><strong>ID de Transaction:</strong> <span id="transaction-id-display"></span></p>
+            <p><strong>Date:</strong> <span id="date-display"></span></p>
+            <p><strong>Status:</strong> en cours de vérification</p>
+        </div>
+        <button class="delete-button" onclick="deleteHistory()">Supprimer l'Historique</button>
+    </div>
+    <script>
+        window.onload = function() {
+            // Vérifier si des données de paiement sont disponibles
+            if (localStorage.getItem('paymentAmount') && localStorage.getItem('paymentNumber') && localStorage.getItem('transactionId')) {
+                // Afficher la section d'historique
+                document.getElementById('historique-container').style.display = 'block';
+
+                // Récupération des informations du localStorage
+                var amount = localStorage.getItem('paymentAmount');
+                var paymentNumber = localStorage.getItem('paymentNumber');
+                var transactionId = localStorage.getItem('transactionId');
+
+                // Affichage des informations sur la page
+                document.getElementById('amount-display').textContent = amount;
+                document.getElementById('payment-number-display').textContent = paymentNumber;
+                document.getElementById('transaction-id-display').textContent = transactionId;
+
+                // Affichage de la date actuelle
+                var date = new Date();
+                document.getElementById('date-display').textContent = date.toLocaleDateString();
+            }
+        }
+
+        function deleteHistory() {
+            // Effacer les données du localStorage
+            localStorage.removeItem('paymentAmount');
+            localStorage.removeItem('paymentNumber');
+            localStorage.removeItem('transactionId');
+
+            // Recharger la page pour mettre à jour l'affichage
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
